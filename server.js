@@ -78,4 +78,54 @@ function viewAllDepartment(){
     })
 }
 // view all by role 
-function viewAllRole
+function viewAllRole(){
+    let query="SELECT (*) FROM role";
+    connection.query(query,function(err,res){
+        if (err) throw err;
+        console.table(res);
+        startMenu();
+    })
+}
+
+//add employee
+function addEmployee(){
+    inquirer
+    .prompt([
+        { 
+            type: "input",
+            message: "Please enter your employee's first name",
+            name:"addFirstName"
+        },
+        { 
+            type: "input",
+            message: "Please enter your employees last name",
+            name:"addLastName"
+        },
+        { 
+            type: "input",
+            message: "Please enter your employees last name",
+            name:"addLastName"
+        },
+        { 
+            type: "input",
+            message: "Please enter their role ID",
+            name:"addRoleId"
+        },
+        { 
+            type: "input",
+            message: "Please enter their manager's ID",
+            name:"addManagerId"
+        }
+    ])
+    .then(function(data){
+        connection.query("INSERT INTO employee (first_name, last_name,role_id, manager_id) VALUES (?,?,?,?)",
+        [data.addFirstName,
+        data.addLastName,
+        data.addRoleId,
+        data.addManagerId], function(res,err){
+            if (err) throw err;
+            console.table(res)
+            startMenu();
+        });
+    });
+}
