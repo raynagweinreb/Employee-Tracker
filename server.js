@@ -2,7 +2,7 @@
 const mysql = require("mysql");
 const inquirer = require("inquirer");
 const consoleTable = require("console.table");
-const { exit } = require("node:process");
+
 
 
 //connection properties
@@ -28,8 +28,8 @@ function startMenu(){
         message: "What would you like to do?",
         choices: [
             "View All Employees", 
-            "View ALl Employees by Department",
-            "View All Employees by Role",
+            "View ALl Departments",
+            "View All Roles",
             "Add Employee",
             "Add Role",
             "Add Department",
@@ -42,9 +42,9 @@ function startMenu(){
     .then((choice)=>{
         if (choice.startSelect === "View All Employees"){
         viewAll();
-    }  else if(choice.startSelect ==="View ALl Employees by Department"){
+    }  else if(choice.startSelect ==="View ALl Departments"){
     viewAllDepartment();
-    } else if(choice.startSelect ==="View All Employees by Role"){
+    } else if(choice.startSelect ==="View All Roles"){
         viewAllRole();
     } else if(choice.startSelect ==="Add Employee"){
         addEmployee();
@@ -77,8 +77,8 @@ function viewAll(){
     
 //  view all by department function
 function viewAllDepartment(){
-    let query="SELECT * FROM department";
-    connection.query(query,function(err,res){
+
+    connection.query("SELECT * FROM department",function(err,res){
         if (err) throw err;
         console.table(res);
         startMenu();
@@ -110,11 +110,6 @@ function addEmployee(){
         },
         { 
             type: "input",
-            message: "Please enter your employees last name",
-            name:"addLastName"
-        },
-        { 
-            type: "input",
             message: "Please enter their role ID",
             name:"addRoleId"
         },
@@ -125,13 +120,19 @@ function addEmployee(){
         }
     ])
     .then((data)=>{
-        connection.query(`INSERT INTO employee (first_name, last_name,role_id, manager_id) VALUES (${data.addFirstName},${data.addLastName},${data.addRoleId},${data.addManagerId})`,
- function(res,err){
-            if (err) throw err;
+        connection.query("INSERT INTO employee SET ?",
+        {first_name: data.addFirstName,
+        last_name: data.addLastName,
+        role_id:data.addRoleId,
+        manager_id: data.addManagerId
+        }
+        );
+        connection.query("SELECT * FROM employee",function(err,res){
+            if(err) throw err;
             console.table(res)
-            startMenu();
-        });
+            startMenu()
     });
+})
 }
 
 //add role 
@@ -155,8 +156,12 @@ function addRole(){
         },
     ])
     .then((data)=>{
-        connection.query(`INSERT INTO role (title,salary,department_id) VALUES (${data.addRoleTitle},${data.addRoleSalary},${data.addRoleDepId})`,
-function(res,err){
+        connection.query("INSERT INTO role SET ?",
+        { title: data.addRoleTitle,
+        salary: data.addRoleSalary,
+        department_id: data.addRoleDepId},
+        );
+        connection.query("SELECT * FROM role",function(err,res){
             if(err) throw err;
             console.table(res)
             startMenu()
@@ -176,13 +181,16 @@ function addDepartment(){
 
     ])
     .then((data)=>{
-        connection.query(`INSERT INTO department (name) VALUES ("${data.addDepName}")`, function(res,err){
-            //if(err) throw err;
+        connection.query("INSERT INTO department SET ?",
+        { name: data.addDepName} 
+        );
+        connection.query("SELECT * FROM department",function(err,res){
+            if(err) throw err;
             console.table(res)
             startMenu()
         })
-    })
-}
+        })
+    }
 
 // update employee role 
 function updateEmployeeRole(){
@@ -223,7 +231,7 @@ function updateEmployeeManager(){
         },
         {
         type:"input",
-        message:"What is their new role id?",
+        message:"What is their new manager id?",
         name: "updateEmployeeManager", 
         }
     ])
@@ -245,7 +253,6 @@ connection.connect(function(err) {
     startMenu();
   });
   function exit(){
-      connection.end(
+      connection.end()
           process.exit()
-      )
   }
