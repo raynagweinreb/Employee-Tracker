@@ -25,3 +25,5 @@ undefined
 ## Questions
 This application was created by raynagweinreb
 Please direct any questions to raynagweinreb@gmail.com
+
+[![employee-tracker.png](https://i.postimg.cc/tTZLKStM/employee-tracker.png)](https://postimg.cc/k6C18yHQ)
