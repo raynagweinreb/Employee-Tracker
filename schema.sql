@@ -1,6 +1,6 @@
 DROP DATABASE IF EXISTS company_db;
 CREATE DATABASE company_db;
-USE employees_db; 
+USE company_db; 
 
 CREATE TABLE department(
 id INT NOT NULL AUTO_INCREMENT, 
@@ -24,8 +24,6 @@ last_name VARCHAR(30) NOT NULL,
 role_id INT NOT NULL, 
 manager_id INT, 
 PRIMARY KEY(id),
-FOREIGN KEY (role_id) REFERENCES role(id) ON DELETE CASCADE,
-FOREIGN KEY (manager_id) REFERENCES employee(id) ON DELETE CASCADE
 );
 
 
